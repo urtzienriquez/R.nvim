@@ -646,8 +646,8 @@ M.selection = function(m)
     end
 
     local ok
-    local _, lang_cfg = quarto.resolve_lang(lang)
-    if lang_cfg then
+    local canonical, lang_cfg = quarto.resolve_lang(lang)
+    if lang_cfg and canonical ~= "r" then
         ok = M.source_lines(lines, nil, lang_cfg)
     else
         ok = M.source_lines(lines, "selection")
