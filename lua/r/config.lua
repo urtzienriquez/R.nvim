@@ -615,7 +615,6 @@ local config = {
             stop_types = { "program", "braced_expression" },
             dedent = false,
             wrap_inline = function(code) return code end,
-            wrap_file = function(filepath) return 'Rnvim.source("' .. filepath .. '")' end,
         },
         python = {
             aliases = { "pyodide" },
@@ -637,6 +636,19 @@ local config = {
             end,
             wrap_file = function(filepath)
                 return 'system2("bash", c(shQuote("' .. filepath .. '")))'
+            end,
+        },
+        sql = {
+            aliases = {},
+            stop_types = { "program" },
+            dedent = true,
+            -- suppressWarnings silences the "dbGetQuery should only be used with
+            -- SELECT" warning on DDL statements (not elegant, but pragmatic).
+            wrap_inline = function(code)
+                return 'suppressWarnings(DBI::dbGetQuery(getOption("nvimcom.sql.conn"), r"---(' .. code .. ')---"))'
+            end,
+            wrap_file = function(filepath)
+                return 'suppressWarnings(DBI::dbGetQuery(getOption("nvimcom.sql.conn"), paste(readLines("' .. filepath .. '"), collapse = "\\n")))'
             end,
         },
     },
